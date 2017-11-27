@@ -53,10 +53,12 @@ describe BlueCr do
     dev = LibBlueZ.open_dev(dev_id)
     #  fun inquiry = hci_inquiry(dev_id : LibC::Int, len : LibC::Int, num_rsp : LibC::Int, lap : LibC::Int*, ii : LibC::Int**, flags : LibC::Long) : LibC::Int
     len = 8
-    num_rsp = 255
-    LibBlueZ.inquiry(dev_id, len, num_rsp, out lap, out ii, 0)
-    puts "ii: #{ii}"
-    puts "lap: #{lap}"
+    max_rsp = 255
+    ii = Slice.new(max_rsp) { LibBlueZ::InquiryReq.new }
+    ptr_ii = ii.to_unsafe
+    number_of_devices = LibBlueZ.inquiry(dev_id, len, max_rsp, out lap, pointerof(ptr_ii), 0)
+    puts "ii: #{ptr_ii}"
+    puts "lap: #{number_of_devices}"
     sleep 1
     LibBlueZ.close_dev(dev)
   end
