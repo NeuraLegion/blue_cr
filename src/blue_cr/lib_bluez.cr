@@ -1,5 +1,7 @@
 @[Link("bluetooth")]
 lib LibBlueZ
+  # Structs
+
   struct Request
     ogf : LibC::Int
     ocf : LibC::Int
@@ -9,6 +11,7 @@ lib LibBlueZ
     rparam : Void*
     rlen : LibC::Int
   end
+
   struct Version
     manufacturer : LibC::Int
     ver : LibC::Int
@@ -16,6 +19,114 @@ lib LibBlueZ
     lmp_ver : LibC::Int
     lmp_subver : LibC::Int
   end
+
+  struct Filter
+    type_mask : LibC::Int
+    event_mask : LibC::Int[2]
+    opcode : LibC::Int
+  end
+
+  struct DevStats
+    err_rx : LibC::Int
+    err_tx : LibC::Int
+    cmd_tx : LibC::Int
+    evt_rx : LibC::Int
+    acl_tx : LibC::Int
+    acl_rx : LibC::Int
+    sco_tx : LibC::Int
+    sco_rx : LibC::Int
+    byte_rx : LibC::Int
+    byte_tx : LibC::Int
+  end
+
+  struct DevInfo
+    dev_id : LibC::Int
+    name : LibC::Char[8]
+    bdaddr : LibC::Int
+    flags : LibC::Int
+    type : LibC::Int
+    features : LibC::Int[8]
+    pkt_type : LibC::Int
+    link_policy : LibC::Int
+    link_mode : LibC::Int
+    acl_mtu : LibC::Int
+    acl_pkts : LibC::Int
+    sco_mtu : LibC::Int
+    sco_pkts : LibC::Int
+    stat : DevStats
+  end
+
+  struct ConnInfo
+    handle : LibC::Int
+    bdaddr : LibC::Int
+    type : LibC::Int
+    out : LibC::Int
+    state : LibC::Int
+    link_mode : LibC::Int
+  end
+
+  struct DevReq
+    dev_id : LibC::Int
+    dev_opt : LibC::Int
+  end
+
+  struct DevListReq
+    dev_num : LibC::Int
+    dev_req : DevReq[0]
+  end
+
+  struct ConnListReq
+    dev_id : LibC::Int
+    conn_num : LibC::Int
+    conn_info : ConnInfo[0]
+  end
+
+  struct ConnInfoReq
+    bdaddr : LibC::Int
+    type : LibC::Int
+    conn_info : ConnInfo[0]
+  end
+
+  struct AuthInfoReq
+    bdaddr : LibC::Int
+    type : LibC::Int
+  end
+
+  struct InquiryReq
+    dev_id : LibC::Int
+    flags : LibC::Int
+    lap : LibC::Int[3]
+    length : LibC::Int
+    num_rsp : LibC::Int
+  end
+
+  struct Security
+    level : Uint8T
+    key_size : Uint8T
+  end
+
+  alias X__Uint8T = UInt8
+  alias Uint8T = X__Uint8T
+
+  struct Power
+    force_active : Uint8T
+  end
+
+  struct Voice
+    setting : Uint16T
+  end
+
+  # Aliases
+
+  alias X__Uint16T = LibC::UShort
+  alias Uint16T = X__Uint16T
+  alias X__Uint64T = LibC::ULong
+  alias Uint64T = X__Uint64T
+  alias X__Uint32T = LibC::UInt
+  alias Uint32T = X__Uint32T
+
+  # Functions
+
   fun open_dev = hci_open_dev(dev_id : LibC::Int) : LibC::Int
   fun close_dev = hci_close_dev(dd : LibC::Int) : LibC::Int
   fun send_cmd = hci_send_cmd(dd : LibC::Int, ogf : LibC::Int, ocf : LibC::Int, plen : LibC::Int, param : Void*) : LibC::Int
@@ -127,97 +238,9 @@ lib LibBlueZ
   fun filter_set_opcode = hci_filter_set_opcode(opcode : LibC::Int, f : Void*)
   fun filter_clear_opcode = hci_filter_clear_opcode(f : Void*)
   fun filter_test_opcode = hci_filter_test_opcode(opcode : LibC::Int, f : Void*) : LibC::Int
-  struct Filter
-    type_mask : LibC::Int
-    event_mask : LibC::Int[2]
-    opcode : LibC::Int
-  end
-  struct DevStats
-    err_rx : LibC::Int
-    err_tx : LibC::Int
-    cmd_tx : LibC::Int
-    evt_rx : LibC::Int
-    acl_tx : LibC::Int
-    acl_rx : LibC::Int
-    sco_tx : LibC::Int
-    sco_rx : LibC::Int
-    byte_rx : LibC::Int
-    byte_tx : LibC::Int
-  end
-  struct DevInfo
-    dev_id : LibC::Int
-    name : LibC::Char[8]
-    bdaddr : LibC::Int
-    flags : LibC::Int
-    type : LibC::Int
-    features : LibC::Int[8]
-    pkt_type : LibC::Int
-    link_policy : LibC::Int
-    link_mode : LibC::Int
-    acl_mtu : LibC::Int
-    acl_pkts : LibC::Int
-    sco_mtu : LibC::Int
-    sco_pkts : LibC::Int
-    stat : DevStats
-  end
-  struct ConnInfo
-    handle : LibC::Int
-    bdaddr : LibC::Int
-    type : LibC::Int
-    out : LibC::Int
-    state : LibC::Int
-    link_mode : LibC::Int
-  end
-  struct DevReq
-    dev_id : LibC::Int
-    dev_opt : LibC::Int
-  end
-  struct DevListReq
-    dev_num : LibC::Int
-    dev_req : DevReq[0]
-  end
-  struct ConnListReq
-    dev_id : LibC::Int
-    conn_num : LibC::Int
-    conn_info : ConnInfo[0]
-  end
-  struct ConnInfoReq
-    bdaddr : LibC::Int
-    type : LibC::Int
-    conn_info : ConnInfo[0]
-  end
-  struct AuthInfoReq
-    bdaddr : LibC::Int
-    type : LibC::Int
-  end
-  struct InquiryReq
-    dev_id : LibC::Int
-    flags : LibC::Int
-    lap : LibC::Int[3]
-    length : LibC::Int
-    num_rsp : LibC::Int
-  end
-  struct Security
-    level : Uint8T
-    key_size : Uint8T
-  end
-  alias X__Uint8T = UInt8
-  alias Uint8T = X__Uint8T
-  struct Power
-    force_active : Uint8T
-  end
-  struct Voice
-    setting : Uint16T
-  end
-  alias X__Uint16T = LibC::UShort
-  alias Uint16T = X__Uint16T
+
+  # Functions bt
   fun get_le64 = bt_get_le64(ptr : Void*) : Uint64T
-  alias X__Uint64T = LibC::ULong
-  alias Uint64T = X__Uint64T
-  fun get_be64 = bt_get_be64(ptr : Void*) : Uint64T
-  fun get_le32 = bt_get_le32(ptr : Void*) : Uint32T
-  alias X__Uint32T = LibC::UInt
-  alias Uint32T = X__Uint32T
   fun get_be32 = bt_get_be32(ptr : Void*) : Uint32T
   fun get_le16 = bt_get_le16(ptr : Void*) : Uint16T
   fun get_be16 = bt_get_be16(ptr : Void*) : Uint16T
@@ -231,5 +254,6 @@ lib LibBlueZ
   fun free = bt_free(ptr : Void*)
   fun error = bt_error(code : Uint16T) : LibC::Int
   fun compidtostr = bt_compidtostr(id : LibC::Int) : LibC::Char*
+  fun get_be64 = bt_get_be64(ptr : Void*) : Uint64T
+  fun get_le32 = bt_get_le32(ptr : Void*) : Uint32T
 end
-
