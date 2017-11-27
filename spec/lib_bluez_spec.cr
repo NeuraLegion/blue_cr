@@ -56,7 +56,7 @@ describe BlueCr do
     max_rsp = 255
     ii = Slice.new(max_rsp) { LibBlueZ::InquiryReq.new }
     ptr_ii = ii.to_unsafe
-    number_of_devices = LibBlueZ.inquiry(dev_id, len, max_rsp, out lap, pointerof(ptr_ii), 0)
+    number_of_devices = LibBlueZ.inquiry(dev_id, len, max_rsp, nil, pointerof(ptr_ii), 0)
     raise "Error scanning for devices" if number_of_devices < 0
     puts "ii: #{ptr_ii}"
     puts "devices found in scan: #{number_of_devices}"
