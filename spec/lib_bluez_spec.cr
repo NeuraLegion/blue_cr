@@ -2,7 +2,7 @@ require "./spec_helper"
 
 describe BlueCr do
   it "open and close device" do
-    LibBlueZ.get_route(out dev_id)
+    dev_id = LibBlueZ.get_route(nil)
     puts "Got dev id: #{dev_id}"
     dev = LibBlueZ.open_dev(dev_id) # hci0
     puts "Dev: #{dev}"
@@ -49,11 +49,11 @@ describe BlueCr do
   #   ret
 
   it "scans for close by bluetooth devices" do
-    LibBlueZ.get_route(out dev_id)
+    dev_id = LibBlueZ.get_route(nil)
     dev = LibBlueZ.open_dev(dev_id)
     #  fun inquiry = hci_inquiry(dev_id : LibC::Int, len : LibC::Int, num_rsp : LibC::Int, lap : LibC::Int*, ii : LibC::Int**, flags : LibC::Long) : LibC::Int
     len = 8
-    max_rsp = 255
+    max_rsp = 2
     ii = Slice.new(max_rsp) { LibBlueZ::InquiryReq.new }
     ptr_ii = ii.to_unsafe
     number_of_devices = LibBlueZ.inquiry(dev_id, len, max_rsp, nil, pointerof(ptr_ii), 0)
