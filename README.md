@@ -1,6 +1,6 @@
 # blue_cr
 
-TODO: Write a description here
+Bluetooth interface using crystal and bluez
 
 ## Installation
 
@@ -9,7 +9,7 @@ Add this to your application's `shard.yml`:
 ```yaml
 dependencies:
   blue_cr:
-    github: [your-github-name]/blue_cr
+    github: NeuraLegion/blue_cr
 ```
 
 ## Usage
@@ -18,15 +18,17 @@ dependencies:
 require "blue_cr"
 ```
 
-TODO: Write usage instructions here
+Right now it's pretty much "look at specs"
 
 ## Development
 
-TODO: Write development instructions here
+- [ ] scan for devices and get back array of addresses  
+- [ ] connect to a remote device  
+- [ ] send arbitery commands to remote device  
 
 ## Contributing
 
-1. Fork it ( https://github.com/[your-github-name]/blue_cr/fork )
+1. Fork it ( https://github.com/NeuraLegion/blue_cr/fork )
 2. Create your feature branch (git checkout -b my-new-feature)
 3. Commit your changes (git commit -am 'Add some feature')
 4. Push to the branch (git push origin my-new-feature)
@@ -34,4 +36,4 @@ TODO: Write development instructions here
 
 ## Contributors
 
-- [[your-github-name]](https://github.com/[your-github-name]) bararchy - creator, maintainer
+- [bararchy](https://github.com/bararchy) - creator, maintainer
