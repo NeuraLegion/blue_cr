@@ -6,4 +6,8 @@ authors:
 
 crystal: 0.24.0+58
 
+dependencies:
+  dbus:
+    github: oprypin/crystal-dbus
+
 license: MIT
