@@ -32,13 +32,21 @@ ble_interface_adapters.each do |ble_adapter|
   intro = ble_adapter.object.interface("org.freedesktop.DBus.Introspectable")
   introspect_xml = intro.call("Introspect").reply
   xml = XML.parse(introspect_xml.first.to_s)
-  ble_devices_names = Array(String).new
+  ble_devices_names = Array(BlueCr::Device).new
   xml.xpath("//node/*").as(XML::NodeSet).each do |node|
     if node.to_s.includes?("dev_")
-      ble_devices_names << node["name"]
+      object = dest.object("/org/bluez/#{ble_adapter.name}/#{node["name"]}")
+      puts "Object: #{object}"
+      interface = object.interface("org.bluez.Device1")
+      prop = object.interface("org.freedesktop.DBus.Properties")
+      puts "interface: #{interface}"
+      device = BlueCr::Device.new(object, interface, prop)
+      ble_devices_names << device
     end
   end
-  puts ble_devices_names
+  ble_devices_names.each do |device|
+    puts "Device: #{device.name} | #{device.address} | #{device.connect} | #{device.disconnect}"
+  end
   answer = ble_adapter.interface.call("StopDiscovery").reply
   raise BlueCr::BluzDBusError.new(answer.first.to_s) unless answer.empty?
 end
