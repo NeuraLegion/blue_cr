@@ -47,6 +47,7 @@ ble_interface_adapters.each do |ble_adapter|
     puts "Device: #{device.name}"
     puts "Address: #{device.address}"
     puts "UUIDs: #{device.uuids}"
+    puts "Dump: #{device.all_properties}"
     puts "#######################\n"
   end
   answer = ble_adapter.interface.call("StopDiscovery").reply
