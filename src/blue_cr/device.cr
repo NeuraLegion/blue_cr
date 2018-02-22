@@ -6,11 +6,15 @@ module BlueCr
     end
 
     def address
-      @proporties.call("Get", ["org.bluez.Device1", "Address"]).reply.first
+      @proporties.call("Get", ["org.bluez.Device1", "Address"]).reply.first.as(DBus::Variant).value
     end
 
     def name
-      @proporties.call("Get", ["org.bluez.Device1", "Name"]).reply.first
+      @proporties.call("Get", ["org.bluez.Device1", "Name"]).reply.first.as(DBus::Variant).value
+    end
+
+    def uuids
+      @proporties.call("Get", ["org.bluez.Device1", "UUIDs"]).reply.first.as(DBus::Variant).value
     end
 
     def connect

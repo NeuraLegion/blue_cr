@@ -36,16 +36,18 @@ ble_interface_adapters.each do |ble_adapter|
   xml.xpath("//node/*").as(XML::NodeSet).each do |node|
     if node.to_s.includes?("dev_")
       object = dest.object("/org/bluez/#{ble_adapter.name}/#{node["name"]}")
-      puts "Object: #{object}"
       interface = object.interface("org.bluez.Device1")
       prop = object.interface("org.freedesktop.DBus.Properties")
-      puts "interface: #{interface}"
       device = BlueCr::Device.new(object, interface, prop)
       ble_devices_names << device
     end
   end
   ble_devices_names.each do |device|
-    puts "Device: #{device.name} | #{device.address} | #{device.connect} | #{device.disconnect}"
+    puts "#######################"
+    puts "Device: #{device.name}"
+    puts "Address: #{device.address}"
+    puts "UUIDs: #{device.uuids}"
+    puts "#######################\n"
   end
   answer = ble_adapter.interface.call("StopDiscovery").reply
   raise BlueCr::BluzDBusError.new(answer.first.to_s) unless answer.empty?
