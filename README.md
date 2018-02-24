@@ -44,7 +44,6 @@ devices.each do |name|
 end
 ```
 
-Right now it's pretty much "look at specs"
 
 ## Development
 
