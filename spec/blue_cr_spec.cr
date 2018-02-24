@@ -2,54 +2,66 @@ require "./spec_helper.cr"
 require "dbus"
 require "xml"
 
-bus = DBus::Bus.new(DBus::BusType::SYSTEM)
-
-dest = bus.destination("org.bluez")
-introspectable_obj = dest.object("/org/bluez")
-introspectable_interface = introspectable_obj.interface("org.freedesktop.DBus.Introspectable")
-rpl1 = introspectable_interface.call("Introspect").reply
-xml = XML.parse(rpl1[0].to_s)
-ble_interface_names = Array(String).new
-xml.xpath("//node/*").as(XML::NodeSet).each do |node|
-  if node.to_s.includes?("hci")
-    ble_interface_names << node["name"]
+describe BlueCr do
+  it "List all avilable adaptors" do
+    adaptors = BlueCr.list_adaptors
+    adaptors.should be_a(Array(String))
   end
-end
 
-ble_interface_adapters = Array(BlueCr::DBusAdapterHandler).new
+  it "get adaptor object" do
+    adaptors = BlueCr.list_adaptors
+    adaptor = BlueCr::DBusAdapterHandler.new(adaptors.first)
+    adaptor.should be_a(BlueCr::DBusAdapterHandler)
+  end
 
-ble_interface_names.each do |name|
-  obj = dest.object("/org/bluez/#{name}")
-  interface = obj.interface("org.bluez.Adapter1")
-  ble_interface_adapters << BlueCr::DBusAdapterHandler.new(name, obj, interface)
-end
+  it "start and stop discovery" do
+    adaptors = BlueCr.list_adaptors
+    adaptor = BlueCr::DBusAdapterHandler.new(adaptors.first)
+    adaptor.start_discovery
+    sleep 5
+    adaptor.stop_discovery
+  end
 
-ble_interface_adapters.each do |ble_adapter|
-  puts "Scanning using adapter: #{ble_adapter.name}"
-  answer = ble_adapter.interface.call("StartDiscovery").reply
-  raise BlueCr::BluzDBusError.new(answer.first.to_s) unless answer.empty?
-  sleep 10
-  intro = ble_adapter.object.interface("org.freedesktop.DBus.Introspectable")
-  introspect_xml = intro.call("Introspect").reply
-  xml = XML.parse(introspect_xml.first.to_s)
-  ble_devices_names = Array(BlueCr::Device).new
-  xml.xpath("//node/*").as(XML::NodeSet).each do |node|
-    if node.to_s.includes?("dev_")
-      object = dest.object("/org/bluez/#{ble_adapter.name}/#{node["name"]}")
-      interface = object.interface("org.bluez.Device1")
-      prop = object.interface("org.freedesktop.DBus.Properties")
-      device = BlueCr::Device.new(object, interface, prop)
-      ble_devices_names << device
+  it "lists devices" do
+    adaptors = BlueCr.list_adaptors
+    adaptor = BlueCr::DBusAdapterHandler.new(adaptors.first)
+    adaptor.start_discovery
+    sleep 5
+    devices = adaptor.list_devices
+    adaptor.stop_discovery
+
+    devices.should be_a(Array(String))
+  end
+
+  it "creates device object from address" do
+    adaptors = BlueCr.list_adaptors
+    adaptor = BlueCr::DBusAdapterHandler.new(adaptors.first)
+    adaptor.start_discovery
+    sleep 5
+    devices = adaptor.list_devices
+    adaptor.stop_discovery
+
+    device = adaptor.get_device(devices.first)
+    device.should be_a(BlueCr::Device)
+  end
+
+  it "generate cool info from devices" do
+    adaptors = BlueCr.list_adaptors
+    adaptor = BlueCr::DBusAdapterHandler.new(adaptors.first)
+    adaptor.start_discovery
+    sleep 5
+    devices = adaptor.list_devices
+    adaptor.stop_discovery
+
+    devices.each do |name|
+      device = adaptor.get_device(name)
+      next unless device
+      puts "#######################"
+      puts "Device: #{device.name}"
+      puts "Address: #{device.address}"
+      puts "UUIDs: #{device.uuids}"
+      puts "Dump: #{device.all_properties}"
+      puts "#######################\n"
     end
   end
-  ble_devices_names.each do |device|
-    puts "#######################"
-    puts "Device: #{device.name}"
-    puts "Address: #{device.address}"
-    puts "UUIDs: #{device.uuids}"
-    puts "Dump: #{device.all_properties}"
-    puts "#######################\n"
-  end
-  answer = ble_adapter.interface.call("StopDiscovery").reply
-  raise BlueCr::BluzDBusError.new(answer.first.to_s) unless answer.empty?
 end
