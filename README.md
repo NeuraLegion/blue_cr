@@ -16,14 +16,40 @@ dependencies:
 
 ```crystal
 require "blue_cr"
+
+# List all adaptors in the machine (hci*)
+adaptors = BlueCr.list_adaptors
+
+# Get first avilable adaptor and get back the adaptor object
+adaptor = BlueCr::Adaptor.new(adaptors.first)
+
+# Start discovery
+adaptor.start_discovery
+sleep 5
+
+# Get back array of all device address
+devices = adaptor.list_devices
+adaptor.stop_discovery
+
+# For each device found, get some info
+devices.each do |name|
+  device = adaptor.get_device(name)
+  next unless device
+  puts "#######################"
+  puts "Device: #{device.name}"
+  puts "Address: #{device.address}"
+  puts "UUIDs: #{device.uuids}"
+  puts "Dump: #{device.all_properties}"
+  puts "#######################\n"
+end
 ```
 
 Right now it's pretty much "look at specs"
 
 ## Development
 
-- [ ] scan for devices and get back array of addresses  
-- [ ] connect to a remote device  
+- [x] scan for devices and get back array of addresses  
+- [x] connect to a remote device  
 - [ ] send arbitery commands to remote device  
 
 ## Contributing

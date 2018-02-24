@@ -2,7 +2,7 @@ require "dbus"
 require "xml"
 
 module BlueCr
-  class DBusAdapterHandler
+  class Adaptor
     getter :name, :object, :interface
 
     @object : DBus::Object

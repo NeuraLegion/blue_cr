@@ -10,13 +10,13 @@ describe BlueCr do
 
   it "get adaptor object" do
     adaptors = BlueCr.list_adaptors
-    adaptor = BlueCr::DBusAdapterHandler.new(adaptors.first)
-    adaptor.should be_a(BlueCr::DBusAdapterHandler)
+    adaptor = BlueCr::Adaptor.new(adaptors.first)
+    adaptor.should be_a(BlueCr::Adaptor)
   end
 
   it "start and stop discovery" do
     adaptors = BlueCr.list_adaptors
-    adaptor = BlueCr::DBusAdapterHandler.new(adaptors.first)
+    adaptor = BlueCr::Adaptor.new(adaptors.first)
     adaptor.start_discovery
     sleep 5
     adaptor.stop_discovery
@@ -24,7 +24,7 @@ describe BlueCr do
 
   it "lists devices" do
     adaptors = BlueCr.list_adaptors
-    adaptor = BlueCr::DBusAdapterHandler.new(adaptors.first)
+    adaptor = BlueCr::Adaptor.new(adaptors.first)
     adaptor.start_discovery
     sleep 5
     devices = adaptor.list_devices
@@ -35,7 +35,7 @@ describe BlueCr do
 
   it "creates device object from address" do
     adaptors = BlueCr.list_adaptors
-    adaptor = BlueCr::DBusAdapterHandler.new(adaptors.first)
+    adaptor = BlueCr::Adaptor.new(adaptors.first)
     adaptor.start_discovery
     sleep 5
     devices = adaptor.list_devices
@@ -47,7 +47,7 @@ describe BlueCr do
 
   it "generate cool info from devices" do
     adaptors = BlueCr.list_adaptors
-    adaptor = BlueCr::DBusAdapterHandler.new(adaptors.first)
+    adaptor = BlueCr::Adaptor.new(adaptors.first)
     adaptor.start_discovery
     sleep 5
     devices = adaptor.list_devices
