@@ -1,9 +1,14 @@
 module BlueCr
   class Device
-    getter :object, :interface, :all_properties
+    getter :object, :interface, :all_properties, :services
     @all_properties : Hash(DBus::Type, DBus::Type)
 
-    def initialize(@object : DBus::Object, @interface : DBus::Interface, @proporties : DBus::Interface)
+    def initialize(@adaptor_name : String, @device_name : String, @object : DBus::Object, @interface : DBus::Interface, @proporties : DBus::Interface)
+      @all_properties = get_all
+      @services = Hash(String, BlueCr::Service).new
+    end
+
+    def refresh
       @all_properties = get_all
     end
 
@@ -14,6 +19,26 @@ module BlueCr
       else
         addr
       end
+    end
+
+    def get_service(uuid : String)
+      @services[uuid]?
+    end
+
+    def list_services
+      intro = @object.interface("org.freedesktop.DBus.Introspectable")
+      introspect_xml = intro.call("Introspect").reply
+      xml = XML.parse(introspect_xml.first.to_s)
+      xml.xpath("//node/*").as(XML::NodeSet).each do |node|
+        if node.to_s.includes?("service")
+          object = @object.object("/org/bluez/#{@adaptor_name}/#{@device_name}/#{node["name"]}")
+          interface = object.interface("org.bluez.GattService1")
+          prop = object.interface("org.freedesktop.DBus.Properties")
+          service = BlueCr::Service.new(@adaptor_name, @device_name, object, interface, prop)
+          @services[service.uuid.to_s] = service
+        end
+      end
+      @services
     end
 
     def name
@@ -28,9 +53,9 @@ module BlueCr
     def uuids
       uuid = @all_properties["UUIDs"]?
       if uuid.is_a?(DBus::Variant)
-        uuid.value
+        uuid.value.as(Array(DBus::Type))
       else
-        uuid
+        uuid.as(Array(DBus::Type))
       end
     end
 

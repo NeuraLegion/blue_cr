@@ -38,7 +38,7 @@ module BlueCr
           object = @dest.object("/org/bluez/#{@name}/#{node["name"]}")
           interface = object.interface("org.bluez.Device1")
           prop = object.interface("org.freedesktop.DBus.Properties")
-          device = BlueCr::Device.new(object, interface, prop)
+          device = BlueCr::Device.new(@name, node["name"], object, interface, prop)
           @devices[device.address.to_s] = device
           ble_devices_names << device.address.to_s
         end

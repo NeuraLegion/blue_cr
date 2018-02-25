@@ -55,13 +55,48 @@ describe BlueCr do
 
     devices.each do |name|
       device = adaptor.get_device(name)
-      next unless device
-      puts "#######################"
-      puts "Device: #{device.name}"
-      puts "Address: #{device.address}"
-      puts "UUIDs: #{device.uuids}"
-      puts "Dump: #{device.all_properties}"
-      puts "#######################\n"
+      if device
+        puts device.connect
+        sleep 5
+        device.refresh
+        puts "#######################"
+        puts "Device: #{device.name}"
+        puts "Address: #{device.address}"
+        puts "UUIDs: #{device.uuids}"
+        puts "Dump: #{device.all_properties}"
+        puts "Service enumaration: "
+        device.list_services
+        device.services.each do |uuid, service|
+          puts "#{uuid}: #{service.service_type}"
+        end
+        puts "#######################\n"
+        puts device.disconnect
+      end
     end
   end
+
+  # it "swat drone" do
+  #   adaptors = BlueCr.list_adaptors
+  #   adaptor = BlueCr::Adaptor.new(adaptors.first)
+  #   adaptor.start_discovery
+  #   sleep 5
+  #   devices = adaptor.list_devices
+  #   adaptor.stop_discovery
+
+  #   device = adaptor.get_device("E0:14:18:67:3D:C2")
+  #   if device
+  #     puts device.connect
+  #     sleep 5
+  #     device.refresh
+  #     puts "#######################"
+  #     puts "Device: #{device.name}"
+  #     puts "Address: #{device.address}"
+  #     puts "UUIDs: #{device.uuids}"
+  #     puts "Dump: #{device.all_properties}"
+  #     puts "Service enumaration: "
+  #     puts device.list_services
+  #     puts "#######################\n"
+  #     puts device.disconnect
+  #   end
+  # end
 end

@@ -1,0 +1,21 @@
+require "csv"
+
+module BlueCr
+  module DbGattCharacteristics
+    extend self
+
+    def by_uuid(uuid : String)
+      bytes = uuid[4..7]
+      table.each do |row|
+        if row["Assigned Number"].strip == "0x#{bytes}"
+          return row.row.to_h
+        end
+      end
+      nil
+    end
+
+    private def table
+      CSV.new(File.read("#{__DIR__}/db/gatt_char.csv"), headers: true)
+    end
+  end
+end
