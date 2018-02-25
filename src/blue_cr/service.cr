@@ -1,10 +1,27 @@
 module BlueCr
   class Service
-    getter :object, :interface, :all_properties
+    getter :object, :interface, :all_properties, :characteristics
     @all_properties : Hash(DBus::Type, DBus::Type)
 
-    def initialize(@adaptor_name : String, @device_name : String, @object : DBus::Object, @interface : DBus::Interface, @proporties : DBus::Interface)
+    def initialize(@adaptor_name : String, @device_name : String, @service_name : String, @object : DBus::Object, @interface : DBus::Interface, @proporties : DBus::Interface)
       @all_properties = get_all
+      @characteristics = Hash(String, BlueCr::Characteristic).new
+    end
+
+    def list_characteristics
+      intro = @object.interface("org.freedesktop.DBus.Introspectable")
+      introspect_xml = intro.call("Introspect").reply
+      xml = XML.parse(introspect_xml.first.to_s)
+      xml.xpath("//node/*").as(XML::NodeSet).each do |node|
+        if node.to_s.includes?("char")
+          object = @object.object("/org/bluez/#{@adaptor_name}/#{@device_name}/#{@service_name}/#{node["name"]}")
+          interface = object.interface("org.bluez.GattCharacteristic1")
+          prop = object.interface("org.freedesktop.DBus.Properties")
+          characteristic = BlueCr::Characteristic.new(object, interface, prop)
+          @characteristics[characteristic.uuid.to_s] = characteristic
+        end
+      end
+      @characteristics
     end
 
     def uuid

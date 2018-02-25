@@ -7,7 +7,7 @@ module BlueCr
     def by_uuid(uuid : String)
       bytes = uuid[4..7]
       table.each do |row|
-        if row["Assigned Number"].strip == "0x#{bytes}"
+        if row["Assigned Number"].strip.downcase == "0x#{bytes}".downcase
           return row.row.to_h
         end
       end

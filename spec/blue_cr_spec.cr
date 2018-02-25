@@ -56,21 +56,31 @@ describe BlueCr do
     devices.each do |name|
       device = adaptor.get_device(name)
       if device
-        puts device.connect
-        sleep 5
-        device.refresh
-        puts "#######################"
-        puts "Device: #{device.name}"
-        puts "Address: #{device.address}"
-        puts "UUIDs: #{device.uuids}"
-        puts "Dump: #{device.all_properties}"
-        puts "Service enumaration: "
-        device.list_services
-        device.services.each do |uuid, service|
-          puts "#{uuid}: #{service.service_type}"
+        begin
+          next unless device.alive?
+          puts device.connect
+          sleep 5
+          device.refresh
+          puts "#######################"
+          puts "Device: #{device.name}"
+          puts "Address: #{device.address}"
+          puts "UUIDs: #{device.uuids}"
+          puts "Dump: #{device.all_properties}"
+          puts "Service enumaration: "
+          device.list_services
+          device.services.each do |uuid, service|
+            puts "Service: #{uuid}: #{service.service_type}"
+            service.list_characteristics
+            puts "characteristics enumaration: "
+            service.characteristics.each do |uuid, char|
+              puts "Characteristic: #{uuid}: #{char.characteristic_type}"
+            end
+          end
+          puts "#######################\n"
+          puts device.disconnect
+        rescue Exception
+          next
         end
-        puts "#######################\n"
-        puts device.disconnect
       end
     end
   end

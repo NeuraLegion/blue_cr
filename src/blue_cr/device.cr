@@ -34,7 +34,7 @@ module BlueCr
           object = @object.object("/org/bluez/#{@adaptor_name}/#{@device_name}/#{node["name"]}")
           interface = object.interface("org.bluez.GattService1")
           prop = object.interface("org.freedesktop.DBus.Properties")
-          service = BlueCr::Service.new(@adaptor_name, @device_name, object, interface, prop)
+          service = BlueCr::Service.new(@adaptor_name, @device_name, node["name"], object, interface, prop)
           @services[service.uuid.to_s] = service
         end
       end
@@ -48,6 +48,10 @@ module BlueCr
       else
         name
       end
+    end
+
+    def alive?
+      @all_properties["RSSI"]?
     end
 
     def uuids
