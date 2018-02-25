@@ -34,13 +34,23 @@ adaptor.stop_discovery
 # For each device found, get some info
 devices.each do |name|
   device = adaptor.get_device(name)
-  next unless device
+  if device
+  puts device.connect
+  sleep 5
+  device.refresh
   puts "#######################"
   puts "Device: #{device.name}"
   puts "Address: #{device.address}"
   puts "UUIDs: #{device.uuids}"
   puts "Dump: #{device.all_properties}"
+  puts "Service enumaration: "
+  device.list_services
+  device.services.each do |uuid, service|
+    puts "#{uuid}: #{service.service_type}"
+  end
   puts "#######################\n"
+  puts device.disconnect
+end
 end
 ```
 
