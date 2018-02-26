@@ -6,6 +6,7 @@ module BlueCr
     def initialize(@adaptor_name : String, @device_name : String, @object : DBus::Object, @interface : DBus::Interface, @proporties : DBus::Interface)
       @all_properties = get_all
       @services = Hash(String, BlueCr::Service).new
+      list_services
     end
 
     def refresh

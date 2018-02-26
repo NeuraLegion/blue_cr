@@ -16,7 +16,7 @@ module BlueCr
       end
     end
 
-    def write_value(value)
+    def write_value(value : Slice(UInt8))
       @interface.call("WriteValue", [value]).reply
     end
 
