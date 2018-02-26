@@ -66,14 +66,13 @@ describe BlueCr do
           puts "Address: #{device.address}"
           puts "UUIDs: #{device.uuids}"
           puts "Dump: #{device.all_properties}"
-          puts "Service enumaration: "
           device.list_services
           device.services.each do |uuid, service|
             puts "Service: #{uuid}: #{service.service_type}"
             service.list_characteristics
-            puts "characteristics enumaration: "
             service.characteristics.each do |uuid, char|
-              puts "Characteristic: #{uuid}: #{char.characteristic_type}"
+              puts "  Characteristic: #{uuid}: #{char.characteristic_type}"
+              puts "  Value: #{char.read_value}"
             end
           end
           puts "#######################\n"

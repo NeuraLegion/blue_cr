@@ -16,6 +16,14 @@ module BlueCr
       end
     end
 
+    def write_value(value)
+      @interface.call("WriteValue", [value]).reply
+    end
+
+    def read_value : DBus::Type
+      @interface.call("ReadValue").reply
+    end
+
     def characteristic_type
       BlueCr::DbGattCharacteristics.by_uuid(uuid.to_s)
     end
