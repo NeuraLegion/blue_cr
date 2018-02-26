@@ -58,10 +58,10 @@ describe BlueCr do
       if device
         next unless device.alive?
         begin
-          puts device.connect
+          puts "#######################"
+          puts "Connect: #{device.connect}"
           sleep 5
           device.refresh
-          puts "#######################"
           puts "Device: #{device.name}"
           puts "Address: #{device.address}"
           puts "UUIDs: #{device.uuids}"
@@ -76,12 +76,12 @@ describe BlueCr do
               puts "  Write Value: #{char.write_value([0_u8, 1_u8, 2_u8, 255_u8])}\n"
             end
           end
-          puts "#######################\n"
         rescue e : Exception
           puts "Error: #{e}"
           next
         ensure
-          puts device.disconnect
+          puts "Disconnect: #{device.disconnect}"
+          puts "#######################\n"
         end
       end
     end
