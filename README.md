@@ -70,7 +70,8 @@ end
 
 - [x] scan for devices and get back array of addresses  
 - [x] connect to a remote device  
-- [ ] send arbitery commands to remote device  
+- [x] send arbitery commands to remote device  
+- Additional features should be asked for via Issues.  
 
 ## Contributing
 
