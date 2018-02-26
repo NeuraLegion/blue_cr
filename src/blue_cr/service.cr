@@ -25,6 +25,10 @@ module BlueCr
       @characteristics
     end
 
+    def get_characteristic(uuid : String) : BlueCr::Characteristic?
+      @characteristics[uuid]?
+    end
+
     def uuid
       name = @all_properties["UUID"]?
       if name.is_a?(DBus::Variant)

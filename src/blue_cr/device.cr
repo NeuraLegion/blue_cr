@@ -22,7 +22,7 @@ module BlueCr
       end
     end
 
-    def get_service(uuid : String)
+    def get_service(uuid : String) : BlueCr::Service?
       @services[uuid]?
     end
 
