@@ -56,8 +56,8 @@ describe BlueCr do
     devices.each do |name|
       device = adaptor.get_device(name)
       if device
+        next unless device.alive?
         begin
-          next unless device.alive?
           puts device.connect
           sleep 5
           device.refresh
@@ -72,13 +72,16 @@ describe BlueCr do
             service.list_characteristics
             service.characteristics.each do |uuid, char|
               puts "  Characteristic: #{uuid}: #{char.characteristic_type}"
-              puts "  Value: #{char.read_value}"
+              puts "  Read Value: #{char.read_value}\n"
+              puts "  Write Value: #{char.write_value([0_u8, 1_u8, 2_u8, 255_u8])}\n"
             end
           end
           puts "#######################\n"
-          puts device.disconnect
-        rescue Exception
+        rescue e : Exception
+          puts "Error: #{e}"
           next
+        ensure
+          puts device.disconnect
         end
       end
     end

@@ -16,12 +16,40 @@ module BlueCr
       end
     end
 
-    def write_value(value : Slice(UInt8))
-      @interface.call("WriteValue", [value]).reply
+    def value
+      name = @all_properties["Value"]?
+      if name.is_a?(DBus::Variant)
+        name.value
+      else
+        name
+      end
     end
 
-    def read_value : DBus::Type
-      @interface.call("ReadValue").reply
+    def write_value(value : Slice(UInt8), options : Hash(String, DBus::Variant) = Hash(String, DBus::Variant).new)
+      name = @interface.call("WriteValue", [value.to_a, options]).reply.first
+      if name.is_a?(DBus::Variant)
+        name.value
+      else
+        name
+      end
+    end
+
+    def write_value(value : Array(UInt8), options : Hash(String, DBus::Variant) = Hash(String, DBus::Variant).new)
+      name = @interface.call("WriteValue", [value, options]).reply.first
+      if name.is_a?(DBus::Variant)
+        name.value
+      else
+        name
+      end
+    end
+
+    def read_value(options : Hash(String, DBus::Variant) = Hash(String, DBus::Variant).new) : DBus::Type
+      name = @interface.call("ReadValue", [options]).reply.first
+      if name.is_a?(DBus::Variant)
+        name.value
+      else
+        name
+      end
     end
 
     def characteristic_type
