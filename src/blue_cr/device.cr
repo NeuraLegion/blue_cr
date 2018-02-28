@@ -72,7 +72,18 @@ module BlueCr
     end
 
     private def get_all
-      @proporties.call("GetAll", ["org.bluez.Device1"]).reply.first.as(Hash(DBus::Type, DBus::Type))
+      prop = @proporties.call("GetAll", ["org.bluez.Device1"]).reply
+      if prop.is_a?(Hash(DBus::Type, DBus::Type))
+        return prop
+      elsif prop.is_a?(Array(DBus::Type))
+        if prop.first.is_a?((Hash(DBus::Type, DBus::Type)))
+          return prop.first.as(Hash(DBus::Type, DBus::Type))
+        else
+          raise BluzDBusError.new(prop.first.to_s)
+        end
+      else
+        raise BluzDBusError.new(prop.to_s)
+      end
     end
   end
 end
