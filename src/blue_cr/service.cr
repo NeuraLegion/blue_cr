@@ -6,7 +6,6 @@ module BlueCr
     def initialize(@adaptor_name : String, @device_name : String, @service_name : String, @object : DBus::Object, @interface : DBus::Interface, @proporties : DBus::Interface)
       @all_properties = get_all
       @characteristics = Hash(String, BlueCr::Characteristic).new
-      list_characteristics
     end
 
     def list_characteristics

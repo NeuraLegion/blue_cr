@@ -41,8 +41,10 @@ describe BlueCr do
     devices = adaptor.list_devices
     adaptor.stop_discovery
 
-    device = adaptor.get_device(devices.first)
-    device.should be_a(BlueCr::Device)
+    if devices.size > 0
+      device = adaptor.get_device(devices.first)
+      device.should be_a(BlueCr::Device)
+    end
   end
 
   it "generate cool info from devices" do
@@ -58,7 +60,7 @@ describe BlueCr do
       if device
         next unless device.alive?
         begin
-          puts "#######################"
+          puts "\n#######################"
           puts "Connect: #{device.connect}"
           sleep 5
           device.refresh
@@ -70,18 +72,19 @@ describe BlueCr do
           device.services.each do |uuid, service|
             puts "Service: #{uuid}: #{service.service_type}"
             service.list_characteristics
-            service.characteristics.each do |uuid, char|
-              puts "  Characteristic: #{uuid}: #{char.characteristic_type}"
+            service.characteristics.each do |_uuid, char|
+              puts "  Characteristic: #{_uuid}: #{char.characteristic_type}"
               puts "  Read Value: #{char.read_value}\n"
-              puts "  Write Value: #{char.write_value([0_u8, 1_u8, 2_u8, 255_u8])}\n"
+              puts "  Write Value: #{char.write_value([0_u8])}\n"
             end
           end
         rescue e : Exception
           puts "Error: #{e}"
+          puts "Trace: #{e.inspect_with_backtrace}"
           next
         ensure
           puts "Disconnect: #{device.disconnect}"
-          puts "#######################\n"
+          puts "#######################"
         end
       end
     end
