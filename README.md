@@ -33,33 +33,31 @@ adaptor.stop_discovery
 
 # For each device found, get some info
 devices.each do |name|
-      device = adaptor.get_device(name)
-      if device
-        begin
-          next unless device.alive?
-          puts device.connect
-          sleep 5
-          device.refresh
-          puts "#######################"
-          puts "Device: #{device.name}"
-          puts "Address: #{device.address}"
-          puts "UUIDs: #{device.uuids}"
-          puts "Dump: #{device.all_properties}"
-          device.list_services
-          device.services.each do |uuid, service|
-            puts "Service: #{uuid}: #{service.service_type}"
-            service.list_characteristics
-            service.characteristics.each do |uuid, char|
-              puts "  Characteristic: #{uuid}: #{char.characteristic_type}"
-              puts "  Value: #{char.read_value}"
-            end
-          end
-          puts "#######################\n"
-          puts device.disconnect
-        rescue Exception
-          next
+  device = adaptor.get_device(name)
+  if device
+    begin
+      next unless device.alive?
+      puts device.connect
+      sleep 5
+      device.refresh
+      puts "#######################"
+      puts "Device: #{device.name}"
+      puts "Address: #{device.address}"
+      puts "UUIDs: #{device.uuids}"
+      puts "Dump: #{device.all_properties}"
+      device.list_services
+      device.services.each do |uuid, service|
+        puts "Service: #{uuid}: #{service.service_type}"
+        service.list_characteristics
+        service.characteristics.each do |uuid, char|
+          puts "  Characteristic: #{uuid}: #{char.characteristic_type}"
+          puts "  Value: #{char.read_value}"
         end
       end
+      puts "#######################\n"
+      puts device.disconnect
+    rescue Exception
+      next
     end
   end
 end
